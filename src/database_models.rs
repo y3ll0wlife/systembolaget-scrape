@@ -74,4 +74,6 @@ pub struct Products {
     pub sugar_content_gram_per100ml: String,
 
     pub apk: String,
+
+    pub url: String,
 }

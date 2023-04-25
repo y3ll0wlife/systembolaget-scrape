@@ -1,3 +1,5 @@
+use std::fmt::format;
+
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -135,5 +137,28 @@ impl Product {
             Some(img) => Some(format!("{}_400.png?q=75&w=2000", img.image_url)),
             None => None,
         }
+    }
+
+    pub fn get_url(&self) -> String {
+        let name = &self
+            .product_name_bold
+            .replace(|c: char| !c.is_ascii(), "")
+            .replace(":", "-")
+            .replace(" ", "-")
+            .to_ascii_lowercase();
+
+        let category = &self
+            .category_level1
+            .clone()
+            .expect("failed to get category")
+            .replace(" &", "")
+            .replace(" ", "-")
+            .replace("Ö", "o")
+            .to_ascii_lowercase();
+
+        format!(
+            "https://www.systembolaget.se/produkt/{}/{}-{}/",
+            &category, &name, &self.product_number
+        )
     }
 }

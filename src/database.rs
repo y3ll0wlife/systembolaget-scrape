@@ -58,7 +58,8 @@ impl Database {
             is_supplier_temporary_not_available INTEGER NOT NULL, 
             sugar_content INTEGER NOT NULL, 
             sugar_content_gram_per100ml TEXT NOT NULL, 
-            apk TEXT NOT NULL
+            apk TEXT NOT NULL,
+            url TEXT NOT NULL
         );
        "#;
         sqlx::query(query).execute(&mut self.connection).await
@@ -108,8 +109,9 @@ impl Database {
                 is_supplier_temporary_not_available,
                 sugar_content,
                 sugar_content_gram_per100ml,
-                apk
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35)
+                apk,
+                url
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36)
             RETURNING *
                         "#,
         )
@@ -148,6 +150,7 @@ impl Database {
         .bind(&product.sugar_content)
         .bind(&product.sugar_content_gram_per100ml)
         .bind(&product.calculate_apk())
+        .bind(&product.get_url())
         .fetch_one(&mut self.connection)
         .await?;
 
