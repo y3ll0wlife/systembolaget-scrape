@@ -12,6 +12,23 @@ The scraper fetches all of the pages of the API and then stores the information 
 
 ---
 
+## Top 10 APK (as of writting this)
+
+| #  	| Product Name       	| Category   	| APK (ml/kr) 	| Alcohol Percentage 	| Price (kr) 	| Volume (ml) 	| Link                                              	|
+|----	|--------------------	|------------	|-------------	|--------------------	|------------	|-------------	|---------------------------------------------------	|
+| 1  	| Pascal Costeau     	| Rött vin   	| 2.4         	| 13.5               	| 169.0      	| 3000.0      	| https://www.systembolaget.se/produkt/vin/5287308/ 	|
+| 2  	| Arboga 10,2        	| Ljus lager 	| 2.33        	| 10.2               	| 21.9       	| 500.0       	| https://www.systembolaget.se/produkt/ol/1139212/  	|
+| 3  	| Sofiero Original   	| Ljus lager 	| 2.29        	| 7.5                	| 16.4       	| 500.0       	| https://www.systembolaget.se/produkt/ol/127312/   	|
+| 4  	| Sju komma tvåan    	| Ljus lager 	| 2.26        	| 7.2                	| 15.9       	| 500.0       	| https://www.systembolaget.se/produkt/ol/156812/   	|
+| 5  	| Three Hearts       	| Ljus lager 	| 2.22        	| 7.5                	| 16.9       	| 500.0       	| https://www.systembolaget.se/produkt/ol/1122812/  	|
+| 6  	| Pripps Extra Stark 	| Ljus lager 	| 2.2         	| 7.2                	| 16.4       	| 500.0       	| https://www.systembolaget.se/produkt/ol/129612/   	|
+| 7  	| Outlaw             	| Rött vin   	| 2.19        	| 14.5               	| 199.0      	| 3000.0      	| https://www.systembolaget.se/produkt/vin/5958508/ 	|
+| 8  	| Il Capolavoro      	| Rött vin   	| 2.19        	| 14.5               	| 199.0      	| 3000.0      	| https://www.systembolaget.se/produkt/vin/5328508/ 	|
+| 9  	| Castillo de Gredos 	| Rött vin   	| 2.18        	| 13.0               	| 179.0      	| 3000.0      	| https://www.systembolaget.se/produkt/vin/1279708/ 	|
+| 10 	| Böda               	| Rosévin    	| 2.14        	| 11.0               	| 154.0      	| 3000.0      	| https://www.systembolaget.se/produkt/vin/5202408/ 	|
+
+---
+
 ## How to use?
 
 Fill out the `.env.example` and rename to `.env`  
