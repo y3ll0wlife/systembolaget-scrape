@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
 #[derive(FromRow, Default, Serialize, Deserialize, Debug)]
-pub struct Products {
+pub struct DatabaseSystembolagetProduct {
     pub product_id: String,
 
     pub product_number: String,

@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -11,11 +9,11 @@ pub struct Image {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SystembolagetSearchResponse {
-    pub products: Vec<Product>,
+    pub products: Vec<SystembolagetProduct>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Product {
+pub struct SystembolagetProduct {
     #[serde(rename = "productId")]
     pub product_id: String,
 
@@ -120,9 +118,9 @@ pub struct Product {
     pub sugar_content_gram_per100ml: f64,
 }
 
-impl Product {
+impl SystembolagetProduct {
     // calculate the alkohol per krona
-    // https://wikipedia.org/wiki/Alkohol_per_krona
+    // https://sv.wikipedia.org/wiki/Alkohol_per_krona
     pub fn calculate_apk(&self) -> f64 {
         let he = (self.alcohol_percentage / 100.0) * self.volume;
 
@@ -140,25 +138,18 @@ impl Product {
     }
 
     pub fn get_url(&self) -> String {
-        let name = &self
-            .product_name_bold
-            .replace(|c: char| !c.is_ascii(), "")
-            .replace(":", "-")
-            .replace(" ", "-")
-            .to_ascii_lowercase();
-
         let category = &self
             .category_level1
             .clone()
             .expect("failed to get category")
             .replace(" &", "")
-            .replace(" ", "-")
-            .replace("Ö", "o")
+            .replace(' ', "-")
+            .replace('Ö', "o")
             .to_ascii_lowercase();
 
         format!(
-            "https://www.systembolaget.se/produkt/{}/{}-{}/",
-            &category, &name, &self.product_number
+            "https://www.systembolaget.se/produkt/{}/{}/",
+            &category, &self.product_number
         )
     }
 }

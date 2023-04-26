@@ -1,14 +1,13 @@
 mod database;
-mod database_models;
-mod systembolaget_models;
+mod systembolaget;
+#[cfg(test)]
+mod tests;
 
-use std::env;
-
-use database::Database;
+use database::database::Database;
 use dotenv::dotenv;
+use std::env;
+use systembolaget::SystembolagetSearchResponse;
 use tokio::main;
-
-use crate::systembolaget_models::SystembolagetSearchResponse;
 
 #[main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -20,7 +19,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
     let mut database = Database::init().await;
     database.create_tables().await?;
-    //let result = database.fetch_all_products().await;
     let max = 500;
 
     for i in 0..=max {
@@ -41,7 +39,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let response = resp.json::<SystembolagetSearchResponse>().await?;
 
         for product in response.products {
-            //println!("{:#?}", product);
             database.insert_product(product).await?;
         }
         println!("{}/{}", i, max);

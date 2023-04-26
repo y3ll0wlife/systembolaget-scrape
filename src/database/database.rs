@@ -1,10 +1,8 @@
-use std::env;
-
+use super::models::DatabaseSystembolagetProduct;
+use crate::systembolaget::SystembolagetProduct;
 use sqlx::sqlite::SqliteQueryResult;
 use sqlx::{Connection, SqliteConnection};
-
-use crate::database_models::Products;
-use crate::systembolaget_models::Product;
+use std::env;
 
 pub struct Database {
     connection: SqliteConnection,
@@ -65,14 +63,20 @@ impl Database {
         sqlx::query(query).execute(&mut self.connection).await
     }
 
-    pub async fn fetch_all_products(&mut self) -> Result<Vec<Products>, sqlx::Error> {
-        sqlx::query_as::<_, Products>("SELECT * FROM products")
+    #[allow(dead_code)]
+    pub async fn fetch_all_products(
+        &mut self,
+    ) -> Result<Vec<DatabaseSystembolagetProduct>, sqlx::Error> {
+        sqlx::query_as::<_, DatabaseSystembolagetProduct>("SELECT * FROM products")
             .fetch_all(&mut self.connection)
             .await
     }
 
-    pub async fn insert_product(&mut self, product: Product) -> Result<(), sqlx::Error> {
-        let _tmp = sqlx::query_as::<_, Products>(
+    pub async fn insert_product(
+        &mut self,
+        product: SystembolagetProduct,
+    ) -> Result<(), sqlx::Error> {
+        let _tmp = sqlx::query_as::<_, DatabaseSystembolagetProduct>(
             r#"
             INSERT OR REPLACE INTO products (
                 product_id,
