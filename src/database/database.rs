@@ -1,22 +1,43 @@
-use super::models::DatabaseSystembolagetProduct;
+use super::models::{DatabaseSplitPerType, DatabaseSystembolagetProduct};
 use crate::systembolaget::SystembolagetProduct;
-use sqlx::sqlite::SqliteQueryResult;
-use sqlx::{Connection, SqliteConnection};
+use sqlx::migrate::MigrateDatabase;
+use sqlx::pool::PoolConnection;
+use sqlx::sqlite::{SqliteConnectOptions, SqliteQueryResult};
+use sqlx::{ConnectOptions, Sqlite, SqlitePool};
 use std::env;
+use std::str::FromStr;
+use tracing::{info, warn};
 
 pub struct Database {
-    connection: SqliteConnection,
+    connection: PoolConnection<Sqlite>,
 }
 
+#[allow(dead_code)]
 impl Database {
     pub async fn init() -> Self {
-        Database {
-            connection: SqliteConnection::connect(
-                &env::var("DATABASE_URL").expect("'DATABASE_URL' is not configured"),
-            )
-            .await
-            .expect("failed to create connection"),
+        let db_url = &env::var("DATABASE_URL").expect("failed to find 'DATABASE_URL' in env");
+
+        if !Sqlite::database_exists(db_url).await.unwrap_or(false) {
+            info!("Creating database {}", db_url);
+            match Sqlite::create_database(db_url).await {
+                Ok(_) => println!("Create db success"),
+                Err(error) => panic!("error: {}", error),
+            }
+        } else {
+            warn!("Database with url '{}' already exists", &db_url);
         }
+
+        let options = SqliteConnectOptions::from_str(&db_url)
+            .expect("failed to create options")
+            .disable_statement_logging()
+            .clone();
+
+        let pool = SqlitePool::connect_with(options)
+            .await
+            .expect("failed to connect to database");
+        let conn = pool.acquire().await.expect("failed to create connection");
+
+        Database { connection: conn }
     }
 
     pub async fn create_tables(&mut self) -> Result<SqliteQueryResult, sqlx::Error> {
@@ -27,7 +48,7 @@ impl Database {
             product_name_bold TEXT NOT NULL, 
             product_name_thin TEXT, 
             producer_name TEXT, 
-            supplier_name TEXT NOT NULL, 
+            supplier_name TEXT, 
             is_kosher INTEGER NOT NULL, 
             bottle_text TEXT NOT NULL, 
             is_organic INTEGER NOT NULL, 
@@ -63,7 +84,6 @@ impl Database {
         sqlx::query(query).execute(&mut self.connection).await
     }
 
-    #[allow(dead_code)]
     pub async fn fetch_all_products(
         &mut self,
     ) -> Result<Vec<DatabaseSystembolagetProduct>, sqlx::Error> {
@@ -72,9 +92,65 @@ impl Database {
             .await
     }
 
+    pub async fn fetch_all_products_category(
+        &mut self,
+    ) -> Result<DatabaseSplitPerType, sqlx::Error> {
+        let fast_sortiment = sqlx::query_as::<_, DatabaseSystembolagetProduct>(
+            "SELECT * FROM products WHERE assortment_text = 'Fast sortiment'",
+        )
+        .fetch_all(&mut self.connection)
+        .await?;
+
+        let tillfälligt_sortiment = sqlx::query_as::<_, DatabaseSystembolagetProduct>(
+            "SELECT * FROM products WHERE assortment_text = 'Tillfälligt sortiment'",
+        )
+        .fetch_all(&mut self.connection)
+        .await?;
+
+        let lokalt_och_småskaligt = sqlx::query_as::<_, DatabaseSystembolagetProduct>(
+            "SELECT * FROM products WHERE assortment_text = 'Lokalt & Småskaligt'",
+        )
+        .fetch_all(&mut self.connection)
+        .await?;
+
+        let säsong = sqlx::query_as::<_, DatabaseSystembolagetProduct>(
+            "SELECT * FROM products WHERE assortment_text = 'Säsong'",
+        )
+        .fetch_all(&mut self.connection)
+        .await?;
+
+        let webblanseringar = sqlx::query_as::<_, DatabaseSystembolagetProduct>(
+            "SELECT * FROM products WHERE assortment_text = 'Webblanseringar'",
+        )
+        .fetch_all(&mut self.connection)
+        .await?;
+
+        let ordervaror = sqlx::query_as::<_, DatabaseSystembolagetProduct>(
+            "SELECT * FROM products WHERE assortment_text = 'Ordervaror'",
+        )
+        .fetch_all(&mut self.connection)
+        .await?;
+
+        let presentsortiment = sqlx::query_as::<_, DatabaseSystembolagetProduct>(
+            "SELECT * FROM products WHERE assortment_text = 'Presentsortiment'",
+        )
+        .fetch_all(&mut self.connection)
+        .await?;
+
+        Ok(DatabaseSplitPerType {
+            fast_sortiment,
+            lokalt_och_småskaligt,
+            ordervaror,
+            presentsortiment,
+            säsong,
+            tillfälligt_sortiment,
+            webblanseringar,
+        })
+    }
+
     pub async fn insert_product(
         &mut self,
-        product: SystembolagetProduct,
+        product: &SystembolagetProduct,
     ) -> Result<(), sqlx::Error> {
         let _tmp = sqlx::query_as::<_, DatabaseSystembolagetProduct>(
             r#"

@@ -1,4 +1,4 @@
-use crate::systembolaget::{Image, SystembolagetProduct, SystembolagetSearchResponse};
+use crate::systembolaget::{Image, Metadata, SystembolagetProduct, SystembolagetSearchResponse};
 
 fn generate_systembolaget_product_struct() -> SystembolagetProduct {
     SystembolagetProduct {
@@ -7,7 +7,7 @@ fn generate_systembolaget_product_struct() -> SystembolagetProduct {
         product_name_bold: String::from("Kopparberg Cocktail Collection"),
         product_name_thin: Some(String::from("Strawberry Cosmo")),
         producer_name: None,
-        supplier_name: String::from("56176"),
+        supplier_name: Some(String::from("56176")),
         is_kosher: false,
         bottle_text: String::from("Burk"),
         is_organic: false,
@@ -47,6 +47,10 @@ fn generate_systembolaget_product_struct() -> SystembolagetProduct {
 fn generate_systembolaget_struct() -> SystembolagetSearchResponse {
     SystembolagetSearchResponse {
         products: vec![generate_systembolaget_product_struct()],
+        metadata: Metadata {
+            doc_count: 0,
+            next_page: -1,
+        },
     }
 }
 

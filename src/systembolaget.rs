@@ -10,6 +10,17 @@ pub struct Image {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SystembolagetSearchResponse {
     pub products: Vec<SystembolagetProduct>,
+    pub metadata: Metadata,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+
+pub struct Metadata {
+    #[serde(rename = "docCount")]
+    pub doc_count: usize,
+
+    #[serde(rename = "nextPage")]
+    pub next_page: i16,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -30,7 +41,7 @@ pub struct SystembolagetProduct {
     pub producer_name: Option<String>,
 
     #[serde(rename = "supplierName")]
-    pub supplier_name: String,
+    pub supplier_name: Option<String>,
 
     #[serde(rename = "isKosher")]
     pub is_kosher: bool,

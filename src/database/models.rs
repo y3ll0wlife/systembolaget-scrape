@@ -77,3 +77,15 @@ pub struct DatabaseSystembolagetProduct {
 
     pub url: String,
 }
+
+#[derive(Default, Serialize, Deserialize, Debug)]
+
+pub struct DatabaseSplitPerType {
+    pub fast_sortiment: Vec<DatabaseSystembolagetProduct>,
+    pub tillfälligt_sortiment: Vec<DatabaseSystembolagetProduct>,
+    pub lokalt_och_småskaligt: Vec<DatabaseSystembolagetProduct>,
+    pub säsong: Vec<DatabaseSystembolagetProduct>,
+    pub webblanseringar: Vec<DatabaseSystembolagetProduct>,
+    pub ordervaror: Vec<DatabaseSystembolagetProduct>,
+    pub presentsortiment: Vec<DatabaseSystembolagetProduct>,
+}
